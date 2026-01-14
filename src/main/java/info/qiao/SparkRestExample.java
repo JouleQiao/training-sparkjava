@@ -11,6 +11,7 @@ import static spark.Spark.*;
 
 public class SparkRestExample {
     public static void main(String[] args) {
+        
         UserService userService = new UserServiceMapImpl();
 
         threadPool(8);
