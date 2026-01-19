@@ -15,21 +15,61 @@
     <junit.version>4.12</junit.version>
     <assertj.version>3.24.2</assertj.version>
     <!--Spark Java 内嵌的 Jetty 9.4.48.v20220622 版本有漏洞，用 9.4.58.v20250814 版本代替-->
+    <embeded.jetty.version>9.4.4.48.v20220622</embeded.jetty.version>
     <jetty.version>9.4.58.v20250814</jetty.version>
   </properties>
   
   <dependencies>
     <!--Spark Java 内嵌的 Jetty 9.4.48.v20220622 版本有漏洞，用 9.4.58.v20250814 版本代替-->
+    <!--SparkJava 除了依赖 jetty-server，还依赖 jetty 其他包，以及一些 test scope 测试包-->
+    <!--目前只需要添加 jetty-server 依赖，其他依赖有必要的话要重新加回来-->
     <!-- Source: https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-server -->
-    <!--<dependency>
+    <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-server</artifactId>
       <version>${jetty.version}</version>
-    </dependency>-->
+    </dependency>
     <dependency>
       <groupId>com.sparkjava</groupId>
       <artifactId>spark-core</artifactId>
       <version>${sparkjava.version}</version>
+      <!--Spark Java 内嵌的 Jetty 9.4.48.v20220622 版本有漏洞，用 9.4.58.v20250814 版本代替-->
+      <exclusions>
+        <!--方案1，用通配符把全部依赖排除-->
+        <!--注意，初略试了一下 exclusion 通配符只支持独立 * 排除所有，不支持字符串*比如 org.eclipse.jetty*、org.eclipse.jetty.* 等-->
+        <!--SparkJava 除了依赖 jetty-server，还依赖 jetty 其他包，以及一些 test scope 测试包，有必要的话要重新加回来-->
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <!--方案2，使用通配符，只排除 jetty 相关依赖-->
+        <!--<exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty.websocket</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>-->
+        <!--方案3，不使用通配符，只排除 jetty 相关依赖-->
+        <!--这个方案比较繁琐，需要把 SparkJava pom.xml 里面的相关依赖全部列出-->
+        <!--<exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-server</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-webapp</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty.websocket</groupId>
+          <artifactId>websocket-server</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty.websocket</groupId>
+          <artifactId>websocket-servlet</artifactId>
+        </exclusion>-->
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.google.code.gson</groupId>
